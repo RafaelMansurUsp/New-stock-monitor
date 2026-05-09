@@ -1,0 +1,20 @@
+/home/rafael/Documents/C#/Inoa2/Stock Monitor/bin/Debug/net8.0/Stock Monitor
+/home/rafael/Documents/C#/Inoa2/Stock Monitor/bin/Debug/net8.0/Stock Monitor.deps.json
+/home/rafael/Documents/C#/Inoa2/Stock Monitor/bin/Debug/net8.0/Stock Monitor.runtimeconfig.json
+/home/rafael/Documents/C#/Inoa2/Stock Monitor/bin/Debug/net8.0/Stock Monitor.dll
+/home/rafael/Documents/C#/Inoa2/Stock Monitor/bin/Debug/net8.0/Stock Monitor.pdb
+/home/rafael/Documents/C#/Inoa2/Stock Monitor/bin/Debug/net8.0/Newtonsoft.Json.dll
+/home/rafael/Documents/C#/Inoa2/Stock Monitor/bin/Debug/net8.0/SendGrid.dll
+/home/rafael/Documents/C#/Inoa2/Stock Monitor/bin/Debug/net8.0/StarkbankEcdsa.dll
+/home/rafael/Documents/C#/Inoa2/Stock Monitor/obj/Debug/net8.0/Stock Monitor.csproj.AssemblyReference.cache
+/home/rafael/Documents/C#/Inoa2/Stock Monitor/obj/Debug/net8.0/Stock Monitor.GeneratedMSBuildEditorConfig.editorconfig
+/home/rafael/Documents/C#/Inoa2/Stock Monitor/obj/Debug/net8.0/Stock Monitor.AssemblyInfoInputs.cache
+/home/rafael/Documents/C#/Inoa2/Stock Monitor/obj/Debug/net8.0/Stock Monitor.AssemblyInfo.cs
+/home/rafael/Documents/C#/Inoa2/Stock Monitor/obj/Debug/net8.0/Stock Monitor.csproj.CoreCompileInputs.cache
+/home/rafael/Documents/C#/Inoa2/Stock Monitor/obj/Debug/net8.0/Stock Monitor.sourcelink.json
+/home/rafael/Documents/C#/Inoa2/Stock Monitor/obj/Debug/net8.0/Stock Monitor.csproj.CopyComplete
+/home/rafael/Documents/C#/Inoa2/Stock Monitor/obj/Debug/net8.0/Stock Monitor.dll
+/home/rafael/Documents/C#/Inoa2/Stock Monitor/obj/Debug/net8.0/refint/Stock Monitor.dll
+/home/rafael/Documents/C#/Inoa2/Stock Monitor/obj/Debug/net8.0/Stock Monitor.pdb
+/home/rafael/Documents/C#/Inoa2/Stock Monitor/obj/Debug/net8.0/Stock Monitor.genruntimeconfig.cache
+/home/rafael/Documents/C#/Inoa2/Stock Monitor/obj/Debug/net8.0/ref/Stock Monitor.dll
