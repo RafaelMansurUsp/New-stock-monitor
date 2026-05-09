@@ -1,0 +1,18 @@
+# Ignorar arquivos binários de build
+bin/
+obj/
+
+# Ignorar arquivos de configuração de IDEs
+.vs/
+.idea/
+.vscode/
+
+# Ignorar pacotes de dependência
+/packages/
+
+# Ignorar logs e arquivos temporários
+*.log
+*.vspscc
+
+# Ignorar arquivos de configuração sensíveis
+ConfigFile.txt
