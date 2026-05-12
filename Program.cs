@@ -15,10 +15,10 @@ class Program
         decimal sellprice = decimal.Parse(args[1]);
         decimal buyprice = decimal.Parse(args[2]);
         List<string> tokens = new List<string>();
-        //nao esquece de trocar aqui depois
+
+        //lê o arquivo de config para as APIS e emails 
          try
-        {
-        
+        {        
             using (StreamReader sr = new StreamReader("ConfigFile.txt"))
             {
                 string line;
@@ -33,8 +33,7 @@ class Program
             Console.WriteLine("The file could not be read:");
             Console.WriteLine(e.Message);
         }
-
-        // tem que mudar aqui para tirar a real token antes de botar no git
+        //API para pegar a cotação das bolsas
         string tokenBrapi = tokens[0];
         string ticker = args[0]; 
         string url = $"https://brapi.dev/api/quote/{ticker}?token={tokenBrapi}";
@@ -45,65 +44,80 @@ class Program
         // Variáveis para controlar o envio de e-mails
         bool isOverSellPrice = false;
         bool isUnderBuyPrice = false;
+        bool isInPrincerange = false;
+        bool isMarketOpen = true;
+        const int ONE_MINUTE = 60000; // 1 minuto em milissegundos
+        TimeSpan open = new TimeSpan(10, 0, 0);
+        TimeSpan close = new TimeSpan(17, 0, 0);
 
-        // aqui comecarua  o while -----------------
-        string response = await client.GetStringAsync(url);
+        TimeSpan currentTime = DateTime.Now.TimeOfDay;
 
-        if (response == null)
-        {   
-            Console.WriteLine("Unable to get stock data");
-            return;
-           
-
-        }
-        Stock? stock = JsonSerializer.Deserialize<Stock>(response);
-            //Console.WriteLine($"Buy: {buyprice}, Sell: {sellprice}\n");
-            //Console.WriteLine($"{stock.results[0].regularMarketPrice}\n");
-
-        string plainTextContent = ""; 
-        if(stock?.results[0].regularMarketPrice > sellprice && !isOverSellPrice)
+        while (isMarketOpen)
         {
-            plainTextContent = $"O preço do ativo {ticker} está acima do valor de venda!";
-            await SendMail(tokens[1],plainTextContent,tokens[2]);
-            isOverSellPrice = true;
 
-        } else if (stock?.results[0].regularMarketPrice < buyprice && !isUnderBuyPrice)
-        {
-            plainTextContent = $"O preço do ativo {ticker} está abaixo do valor de compra!";
-            await SendMail(tokens[1],plainTextContent,tokens[2]);
-            isUnderBuyPrice = true;
+            if (currentTime <= open || currentTime >= close)
+            {
+                isMarketOpen = false;
+            }
+            string response = await client.GetStringAsync(url);
+
+            if (response == null)
+            {   
+                Console.WriteLine("Unable to get stock data");
+                return;           
+
+            }
+            //transforma resposta do JSON em formato mais legivel e utilizável 
+            Stock? stock = JsonSerializer.Deserialize<Stock>(response);
+            decimal currentPrice = stock?.results[0].regularMarketPrice ?? 0;
+            string plainTextContent = ""; 
+            if(currentPrice >= sellprice && !isOverSellPrice)
+            {
+                plainTextContent = $"O preço do ativo {ticker} está acima do valor de venda!(R${currentPrice})";
+                Console.WriteLine(plainTextContent);
+                await SendMail(tokens[1],plainTextContent,tokens[2], tokens[3]);
+                isOverSellPrice = true; //previnir spam de email 
+                isInPrincerange = false;
+
+            } else if (currentPrice <= buyprice && !isUnderBuyPrice)
+            {
+                plainTextContent = $"O preço do ativo {ticker} está abaixo do valor de compra!(R${currentPrice})";
+                Console.WriteLine(plainTextContent);
+                await SendMail(tokens[1],plainTextContent,tokens[2], tokens[3]);
+                isUnderBuyPrice = true; //previnir spam de email 
+                isInPrincerange = false;
+            }
+            else
+            {
+                
+                if (currentPrice < sellprice && currentPrice > buyprice && !isInPrincerange)
+                {
+                    Console.WriteLine($"O preço do ativo {ticker} está fora da área de interesse.(R${currentPrice})");
+                    isOverSellPrice = false;
+                    isUnderBuyPrice = false;
+                    isInPrincerange = true;
+                }                
+            }
+            await Task.Delay(ONE_MINUTE/6);
         }
-        else
-        {
-            isOverSellPrice = false;
-            isUnderBuyPrice = false;
-        }
+        Console.WriteLine("Mercado fechado. O programa será encerrado.");
 
-        //aqui tbm
-        
-
-        // Enviar o e-mail
-        //ver se da para fazer uma classe bonitinha para o corpo 
-        //var responseEmail = await emailClient.SendEmailAsync(msg);
-        //Console.WriteLine($"Status Code: {responseEmail.StatusCode}");
     }
 
-    static async Task SendMail(string token, string plainTextContent, string user)
+    static async Task SendMail(string token, string plainTextContent, string senderEmail, string recipientEmail)
     {
         var apiKey = token;  
         var emailClient = new SendGridClient(apiKey);
-        //aqui tambem
-        var from = new EmailAddress(user, "StockMonitor");
+        var from = new EmailAddress(senderEmail, "StockMonitor");
         var subject = "Alerta de Cotação";
-        //botar o email no documento de configuração depois
-        var to = new EmailAddress("rafaelbamansur@usp.br", "User");
+        var to = new EmailAddress(recipientEmail, "User");
         var htmlContent = $"<strong>{plainTextContent}</strong>";
 
         var msg = MailHelper.CreateSingleEmail(from, to, subject, plainTextContent, htmlContent);
 
         //NAO ESQUECE DE DESCOMENTAR AQUI 
-        //var responseEmail = await emailClient.SendEmailAsync(msg);
-        //Console.WriteLine($"Status Code: {responseEmail.StatusCode}");
+        var responseEmail = await emailClient.SendEmailAsync(msg);
+        Console.WriteLine($"Status Code: {responseEmail.StatusCode}");
 
     }
 }
