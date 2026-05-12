@@ -7,9 +7,6 @@ obj/
 .idea/
 .vscode/
 
-# Ignorar pacotes de dependência
-/packages/
-
 # Ignorar logs e arquivos temporários
 *.log
 *.vspscc
