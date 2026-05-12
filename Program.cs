@@ -115,7 +115,6 @@ class Program
 
         var msg = MailHelper.CreateSingleEmail(from, to, subject, plainTextContent, htmlContent);
 
-        //NAO ESQUECE DE DESCOMENTAR AQUI 
         var responseEmail = await emailClient.SendEmailAsync(msg);
         Console.WriteLine($"Status Code: {responseEmail.StatusCode}");
 
