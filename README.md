@@ -20,7 +20,7 @@ O programa consulta periodicamente o preço da ação e envia um alerta por e-ma
 A API da **Brapi** é utilizada para obter os valores das cotações solicitadas.
 
 No plano gratuito, há um limite de **15.000 requisições por mês**.
-
+Por esse motivo, o sistema realiza uma requisição por minuto apenas durante o horário de funcionamento da B3
 Para obter a chave da API:
 
 1. Acesse o site da [Brapi](https://brapi.dev/).
@@ -142,7 +142,7 @@ Após gerar o executável, você pode executar o programa passando os argumentos
 ### Windows
 
 ```bash
-./StockMonitor.exe PETR4 45.70 45.72
+StockMonitor.exe PETR4 45.70 45.72
 ```
 
 ### Linux
