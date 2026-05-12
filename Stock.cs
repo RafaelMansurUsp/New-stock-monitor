@@ -1,3 +1,4 @@
+//Classe para deserializar a resposta da API do Brapi
 public class Stock
 {
     public List<StockData> results { get; set; } = new List<StockData>();

@@ -12,9 +12,9 @@ class Program
 {
     static async Task Main(string[] args)
     {   
-        decimal sellprice = decimal.Parse(args[1]);
-        decimal buyprice = decimal.Parse(args[2]);
-        List<string> tokens = new List<string>();
+        decimal sellprice = decimal.Parse(args[1]); //valor de venda 
+        decimal buyprice = decimal.Parse(args[2]); //valor de compra
+        List<string> tokens = new List<string>();//dados para configurar as APIS
 
         //lê o arquivo de config para as APIS e emails 
          try
@@ -28,14 +28,16 @@ class Program
                 }
             }
         }
+        //Se o arquivo não pôde ser lido, impossível continuar
         catch (Exception e)
         {
             Console.WriteLine("The file could not be read:");
             Console.WriteLine(e.Message);
+            return;
         }
         //API para pegar a cotação das bolsas
-        string tokenBrapi = tokens[0];
-        string ticker = args[0]; 
+        string tokenBrapi = tokens[0]; //token da API de cotação
+        string ticker = args[0]; //ativo a ser monitorado
         string url = $"https://brapi.dev/api/quote/{ticker}?token={tokenBrapi}";
 
         using HttpClient client = new HttpClient();
@@ -45,16 +47,20 @@ class Program
         bool isOverSellPrice = false;
         bool isUnderBuyPrice = false;
         bool isInPrincerange = false;
+        // Variável para controlar o loop de monitoramento do mercado
         bool isMarketOpen = true;
+        // Clarificação do invervalo de monitoramento, para não sobrecarregar a API,
         const int ONE_MINUTE = 60000; // 1 minuto em milissegundos
+        // Horário de abertura e fechamento do mercado (10:00 às 17:00)
         TimeSpan open = new TimeSpan(10, 0, 0);
         TimeSpan close = new TimeSpan(17, 0, 0);
 
-        TimeSpan currentTime = DateTime.Now.TimeOfDay;
+        
 
         while (isMarketOpen)
         {
-
+            //Obtendo o horário atual e verificando se o mercado está aberto
+            TimeSpan currentTime = DateTime.Now.TimeOfDay;
             if (currentTime <= open || currentTime >= close)
             {
                 isMarketOpen = false;
@@ -63,14 +69,15 @@ class Program
 
             if (response == null)
             {   
+                //Se a resposta da API for nula, impossível continuar
                 Console.WriteLine("Unable to get stock data");
-                return;           
-
+                return;
             }
-            //transforma resposta do JSON em formato mais legivel e utilizável 
+            //Transforma resposta do JSON em formato mais legivel e utilizável 
             Stock? stock = JsonSerializer.Deserialize<Stock>(response);
             decimal currentPrice = stock?.results[0].regularMarketPrice ?? 0;
             string plainTextContent = ""; 
+            //Preço dentro da área de venda
             if(currentPrice >= sellprice && !isOverSellPrice)
             {
                 plainTextContent = $"O preço do ativo {ticker} está acima do valor de venda!(R${currentPrice})";
@@ -79,6 +86,7 @@ class Program
                 isOverSellPrice = true; //previnir spam de email 
                 isInPrincerange = false;
 
+            //Preço dentro da área de compra
             } else if (currentPrice <= buyprice && !isUnderBuyPrice)
             {
                 plainTextContent = $"O preço do ativo {ticker} está abaixo do valor de compra!(R${currentPrice})";
@@ -87,23 +95,21 @@ class Program
                 isUnderBuyPrice = true; //previnir spam de email 
                 isInPrincerange = false;
             }
-            else
-            {
-                
-                if (currentPrice < sellprice && currentPrice > buyprice && !isInPrincerange)
+            //Preço fora da área de interesse
+            else if (currentPrice < sellprice && currentPrice > buyprice && !isInPrincerange)
                 {
                     Console.WriteLine($"O preço do ativo {ticker} está fora da área de interesse.(R${currentPrice})");
                     isOverSellPrice = false;
                     isUnderBuyPrice = false;
                     isInPrincerange = true;
-                }                
-            }
-            await Task.Delay(ONE_MINUTE/6);
+                }
+            //Não há um else geral para evitar spam de mensagens no terminal
+            //Delay de 1 minuto para não sobrecarregar a API e evitar spam de mensagens
+            await Task.Delay(ONE_MINUTE);
         }
         Console.WriteLine("Mercado fechado. O programa será encerrado.");
-
     }
-
+    //Função para enviar email utilizando a API do SendGrid
     static async Task SendMail(string token, string plainTextContent, string senderEmail, string recipientEmail)
     {
         var apiKey = token;  
