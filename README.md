@@ -35,7 +35,7 @@ A API do **SendGrid** é utilizada como servidor **SMTP** para o envio dos alert
 
 Para obter a chave necessária:
 
-1. Crie uma conta no SendGrid.
+1. Crie uma conta no [SendGrid](https://app.sendgrid.com/).
 2. Acesse a aba **Email API**.
 3. Entre em **Integration Guide**.
 4. Siga o tutorial de **SMTP Relay**.
