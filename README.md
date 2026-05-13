@@ -120,7 +120,7 @@ dotnet publish -c Release -r win-x64 --self-contained true /p:PublishSingleFile=
 O executável será gerado dentro da pasta:
 
 ```txt
-bin/Release/netX.X/win-x64/publish/
+bin\Release\net8.0\win-x64\publish\
 ```
 
 ### Linux
@@ -132,12 +132,12 @@ dotnet publish -c Release -r linux-x64 --self-contained true /p:PublishSingleFil
 O executável será gerado dentro da pasta:
 
 ```txt
-bin/Release/netX.X/linux-x64/publish/
+bin/Release/net8.0/linux-x64/publish/
 ```
 
 ## Exemplo de uso
 
-Após gerar o executável, você pode executar o programa passando os argumentos diretamente pelo terminal.
+Após gerar o executável, você pode executar o programa passando os argumentos diretamente pelo terminal. Tenha certeza de que o ConfigFile.txt na mesma pasta que o .exe!
 
 ### Windows
 
